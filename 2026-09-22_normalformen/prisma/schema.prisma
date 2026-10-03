@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  runtime  = "deno"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// Normalformen-Beispiel (3NF): Musik-DB.
+// Unnormalisiert wäre alles in einer Tabelle Song(titel, kuenstlerName, labelName, ...).
+// 1NF: keine Mehrfachwerte -> eigene Tabellen + eigene Zeilen pro Song/Künstler.
+// 2NF: alles hängt vom ganzen Schlüssel ab -> Fremdschlüssel kuenstlerId, labelId statt Namen kopieren.
+// 3NF: keine transitiven Abhängigkeiten (Song -> Künstler -> Label, nicht Song -> Label direkt).
+
+model Label {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  kuenstler Kuenstler[]
+}
+
+model Kuenstler {
+  id      Int     @id @default(autoincrement())
+  name    String
+  labelId Int?
+  label   Label?  @relation(fields: [labelId], references: [id])
+  songs   Song[]
+}
+
+model Song {
+  id          Int        @id @default(autoincrement())
+  titel       String
+  dauerSek    Int
+  kuenstlerId Int
+  kuenstler   Kuenstler  @relation(fields: [kuenstlerId], references: [id])
+  playlists   Playlist[]
+}
+
+model Playlist {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  songs Song[]
+}

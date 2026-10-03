@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@prisma/adapter-better-sqlite3": "npm:@prisma/adapter-better-sqlite3@^7.10.0",
+    "@prisma/client": "npm:@prisma/client@^7.10.0",
+    "prisma": "npm:prisma@^8.0.0-rc.15"
+  }
+}
